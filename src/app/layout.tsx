@@ -1,16 +1,35 @@
 import "@/styles/globals.css";
 import Toaster from "@/components/utilities/Toaster";
+import type { Metadata } from "next";
 
 import { Inter } from "next/font/google";
+import Footer from "@/components/custom/Footer";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
 });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "TTS Comparison",
+  metadataBase: new URL("https://tts-comparison.vercel.app/"),
+
   icons: [{ rel: "icon", url: "/favicon.ico" }],
+  openGraph: {
+    title: "TTS Comparison",
+    description: "A comparison of various TTS Providers",
+    url: "https://tts-comparison.vercel.app/",
+    images: [
+      {
+        url: "/og.png",
+        width: 1700,
+        height: 640,
+        alt: "TTS Comparison",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -23,9 +42,7 @@ export default function RootLayout({
       <body className={`font-sans ${inter.variable} mb-12 bg-gray-50`}>
         {children}
         <Toaster richColors closeButton />
-        <footer className="fixed bottom-0 flex h-12 w-full items-center bg-gray-900 px-2 text-white">
-          Note: No API keys leave your browser and are stored in local storage.
-        </footer>
+        <Footer />
       </body>
     </html>
   );
