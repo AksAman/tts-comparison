@@ -163,7 +163,7 @@ const TTS: React.FC<TTSProps> = ({ className, config, text }) => {
       </div>
       <audio src="" ref={audioRef}></audio>
       <div className="bg-gray-600 p-2 text-gray-300">{text}</div>
-      <div className="my-2 flex flex-row items-center justify-between gap-4">
+      <div className="my-2 flex flex-row flex-wrap items-center justify-between gap-4">
         {config.streamSupported ? (
           <div className="flex flex-row items-center justify-center gap-2">
             <Checkbox

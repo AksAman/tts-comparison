@@ -25,7 +25,7 @@ export default function HomePage() {
           value={currentText}
           onChange={(e) => setCurrentText(e.target.value)}
         ></textarea>
-        <div className=" grid  h-[calc(100%-4rem)] grid-cols-2  gap-4">
+        <div className=" grid  h-[calc(100%-4rem)] gap-4  md:grid-cols-2">
           <TTS className="w-full" text={currentText} config={XILabsTTSConfig} />
           <TTS className="w-full" text={currentText} config={OpenAITTSConfig} />
 
