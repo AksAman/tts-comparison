@@ -259,7 +259,9 @@ const TTS: React.FC<TTSProps> = ({ className, config, text }) => {
       </div>
       {config.costPerCharacter && (
         <div className="flex gap-2 text-sm text-gray-400">
-          <span>ApproximateCost per character: ${config.costPerCharacter}</span>
+          <span>
+            Approximate Cost per character: ${config.costPerCharacter}
+          </span>
           <span>Total cost: ${config.costPerCharacter * text.length}</span>
         </div>
       )}
