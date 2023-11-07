@@ -25,5 +25,6 @@ export interface TTSServiceConfig {
     outputFormats: string[];
     defaultOutputFormat: string;
     costPerCharacter?: number;
+    inactive?: boolean;
 }
 

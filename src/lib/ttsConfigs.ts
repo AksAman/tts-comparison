@@ -53,3 +53,7 @@ export const OpenAITTSConfig: TTSServiceConfig = {
 
 };
 
+
+const configs: TTSServiceConfig[] = [OpenAITTSConfig, XILabsTTSConfig];
+
+export default configs;

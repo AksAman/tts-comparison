@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 import Toaster from "@/components/utilities/Toaster";
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/react";
 
 import { Inter } from "next/font/google";
 import Footer from "@/components/custom/Footer";
@@ -43,6 +44,7 @@ export default function RootLayout({
         {children}
         <Toaster richColors closeButton />
         <Footer />
+        <Analytics />
       </body>
     </html>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import TTS from "@/components/custom/TTS";
-import { OpenAITTSConfig, XILabsTTSConfig } from "@/lib/ttsConfigs";
+import ttsConfigs from "@/lib/ttsConfigs";
 import React from "react";
 
 export default function HomePage() {
@@ -24,10 +24,16 @@ export default function HomePage() {
           onChange={(e) => setCurrentText(e.target.value)}
         ></textarea>
         <div className=" grid  h-[calc(100%-4rem)] gap-4  md:grid-cols-2">
-          <TTS className="w-full" text={currentText} config={XILabsTTSConfig} />
-          <TTS className="w-full" text={currentText} config={OpenAITTSConfig} />
-
-          {/* <XILabsTTS className="w-full" text={inputRef.current.value}/> */}
+          {ttsConfigs.map((config) => {
+            return (
+              <TTS
+                key={config.key}
+                className="w-full"
+                text={currentText}
+                config={config}
+              />
+            );
+          })}
         </div>
       </div>
     </main>
