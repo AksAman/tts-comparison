@@ -10,9 +10,9 @@ export default function HomePage() {
   );
 
   return (
-    <main className="flex h-full w-full flex-row items-center justify-between border p-4">
+    <main className="flex h-full w-full flex-row items-center justify-between  p-4">
       {/* sidebar */}
-      <div className="flex h-full flex-col items-center justify-center border"></div>
+      <div className="flex h-full flex-col items-center justify-center "></div>
       <div className="bg-slate-s h-full w-full rounded-md p-3  md:mx-12">
         <h2 className="pb-2 text-center text-2xl">TTS Comparison</h2>
         <textarea

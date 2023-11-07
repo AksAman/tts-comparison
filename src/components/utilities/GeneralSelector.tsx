@@ -58,7 +58,7 @@ function GeneralSelector<T extends GenericItem>({
         value={value}
         {...props}
       >
-        <SelectTrigger className="md:w-[200px]">
+        <SelectTrigger className="border-none bg-slate-600 text-white md:w-[200px]">
           <SelectValue
             className="truncate"
             placeholder={props.placeholder ?? "Select Item"}

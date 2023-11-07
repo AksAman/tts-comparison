@@ -38,6 +38,10 @@ export async function GET(request: Request) {
 
         })
     })
+    const headers = response.headers;
+    const status = response.status;
     const startMillis = performance.now();
-    return ConvertResponseToStream(response, { startMillis, serviceName: "OpenAI" })
+    const stream = ConvertResponseToStream(response, { startMillis, serviceName: "OpenAI" })
+
+    return new NextResponse(stream, { headers, status });
 }

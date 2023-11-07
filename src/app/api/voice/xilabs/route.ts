@@ -84,10 +84,12 @@ const getStream = async ({ text, stream, isFake, voice: requestVoiceID }: Reques
             }
             return NextResponse.json({ error: "Something went wrong" }, { status: 500 })
         }
-        return ConvertResponseToStream(response, {
-            startMillis: startMillis,
-            serviceName: "XILabs"
-        });
+        const headers = response.headers;
+        const status = response.status;
+        const ttsStream = ConvertResponseToStream(response, { startMillis, serviceName: "XILabs" })
+
+        return new NextResponse(ttsStream, { headers, status });
+
     } catch (error) {
         let message = "Something went wrong"
         if (error instanceof Error) {

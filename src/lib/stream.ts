@@ -1,4 +1,3 @@
-import { NextResponse } from 'next/server';
 
 export interface StreamCallbacksAndOptions {
     startMillis?: number;
@@ -8,10 +7,9 @@ export interface StreamCallbacksAndOptions {
     serviceName?: string;
 }
 
-export default function ConvertResponseToStream(response: Response, options: StreamCallbacksAndOptions): NextResponse {
+export default function ConvertResponseToStream(response: Response, options: StreamCallbacksAndOptions): ReadableStream<Uint8Array> {
     let firstRead = true;
-    const headers = response.headers;
-    const status = response.status;
+
     const values: Uint8Array[] = [];
     const serviceName = options.serviceName ?? "TTS";
     const nextStream = new ReadableStream<Uint8Array>({
@@ -46,5 +44,6 @@ export default function ConvertResponseToStream(response: Response, options: Str
             void read();
         },
     });
-    return new NextResponse(nextStream, { headers, status });
+    return nextStream;
 }
+
