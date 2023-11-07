@@ -112,6 +112,9 @@ const TTS: React.FC<TTSProps> = ({ className, config, text }) => {
     }
 
     // resetLogState();
+    setRequestedAt(-1);
+    setStartedAt(-1);
+    setEndedAt(-1);
     if (!text) return;
     const url = getAudioURL({
       endpoint: config.endpoint,
@@ -157,6 +160,7 @@ const TTS: React.FC<TTSProps> = ({ className, config, text }) => {
             value={voiceID}
             onValueChange={(v) => {
               setVoiceID(v);
+              addLog(`Changed voice to ${v}`);
             }}
           />
         </div>
@@ -192,6 +196,7 @@ const TTS: React.FC<TTSProps> = ({ className, config, text }) => {
             value={outputFormat}
             onValueChange={(v) => {
               setOutputFormat(v);
+              addLog(`Changed output format to ${v}`);
             }}
           />
         </div>
@@ -206,7 +211,7 @@ const TTS: React.FC<TTSProps> = ({ className, config, text }) => {
       <Button
         className={
           `my-2 rounded-md bg-black px-4 py-2 text-white disabled:bg-gray-600 ` +
-          (isPlaying ? "bg-red-500" : "")
+          (isPlaying ? "bg-red-500 hover:bg-red-400" : "")
         }
         onClick={onAddAudioClicked}
       >
