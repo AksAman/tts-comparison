@@ -18,8 +18,10 @@ export const XILabsTTSConfig: TTSServiceConfig = {
     "pcm_24000",
     "pcm_44100",
   ],
+  defaultOutputFormat: "mp3_44100",
   clientEndpoint: XILabsClientAPI,
   costPerCharacter: 0.24 * 0.001,
+  defaultActor: "21m00Tcm4TlvDq8ikWAM",
 };
 
 
@@ -44,7 +46,10 @@ export const OpenAITTSConfig: TTSServiceConfig = {
     "aac",
     "flac",
   ],
+  defaultOutputFormat: "opus",
   clientEndpoint: OpenAIClientAPI,
   costPerCharacter: 0.015 * 0.001,
+  defaultActor: "alloy",
 
 };
+

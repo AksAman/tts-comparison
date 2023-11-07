@@ -1,6 +1,5 @@
-import { LatencyOptimizationMode, RequestSchema, type RequestType } from '@/types/xi';
-import ConvertResponseToStream from "@/lib/stream";
-import { type TTSRequest } from '@/types/tts';
+import { type ClientTTSRequest, } from '@/types/tts';
+import { LatencyOptimizationMode } from '@/types/xi';
 
 
 
@@ -31,13 +30,21 @@ const getXIHeaders = (apiKey: string) => ({
     "Content-Type": 'application/json'
 })
 
-async function getXIResponse({ apiKey, voiceId, text, voice_settings, stream, latencyOptimization = LatencyOptimizationMode.MAX_OPTIMIZATION }: { apiKey: string, voiceId: string; voice_settings: VoiceSettings, text: string; stream?: boolean, latencyOptimization?: LatencyOptimizationMode }) {
-    const headers = getXIHeaders(apiKey);
-    const streamTag = stream ? "/stream" : "";
-    if (stream) { console.log("using stream mode") } else { console.log("using non-stream mode") }
-    const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}${streamTag}?optimize_streaming_latency=${latencyOptimization}`;
+const createElevenLabsURL = (request: ClientTTSRequest) => {
+    const streamTag = request.stream ? "/stream" : "";
+    const voiceID = request.voice ?? "21m00Tcm4TlvDq8ikWAM"
+    const url = new URL(`https://api.elevenlabs.io/v1/text-to-speech/${voiceID}${streamTag}`);
+    url.searchParams.append("optimize_streaming_latency", LatencyOptimizationMode.MAX_OPTIMIZATION.toString());
+    url.searchParams.append("output_format", request.outputFormat);
+    return url.toString();
+}
+
+async function getXIResponse(request: ClientTTSRequest) {
+    const headers = getXIHeaders(request.apiKey);
+    if (request.stream) { console.log("using stream mode") } else { console.log("using non-stream mode") }
+    const url = createElevenLabsURL(request)
     console.log("url", url)
-    const body = getXILabsRequestData(text, voice_settings);
+    const body = getXILabsRequestData(request.text, defaultXIVoiceSettings);
     return fetch(url, {
         method: 'POST',
         headers,
@@ -47,29 +54,10 @@ async function getXIResponse({ apiKey, voiceId, text, voice_settings, stream, la
 
 
 
-const getStream = ({ response, startMillis }: { response: Response, startMillis: number }) => {
+const getResponse = async (request: ClientTTSRequest) => {
     try {
         // start a stream to xi labs
-        const ttsStream = ConvertResponseToStream(response, { startMillis, serviceName: "XILabs" })
-        return ttsStream
-
-    } catch (error) {
-        let message = "Something went wrong"
-        if (error instanceof Error) {
-            message = error.message
-
-        }
-        console.error("Something went wrong", message)
-        return null
-    }
-}
-
-
-const getResponse = async ({ apiKey, text, stream, voice: requestVoiceID, }: { apiKey: string } & RequestType) => {
-    try {
-        // start a stream to xi labs
-        const voiceID = requestVoiceID ?? "21m00Tcm4TlvDq8ikWAM"
-        const response = await getXIResponse({ apiKey, voiceId: voiceID, voice_settings: defaultXIVoiceSettings, text, stream })
+        const response = await getXIResponse(request)
         return response
 
     } catch (error) {
@@ -85,18 +73,9 @@ const getResponse = async ({ apiKey, text, stream, voice: requestVoiceID, }: { a
 
 
 
-export async function GET(apiKey: string, request: TTSRequest) {
-    // const session = await getAuthSession();
-    // if (!session) {
-    //     return NextResponse.json({ error: "You must be logged in to use this feature" }, { status: 401 })
-    // }
-    const parseResult = RequestSchema.safeParse(request)
-    if (!parseResult.success) {
-        return null
-    }
-
+export async function GET(request: ClientTTSRequest) {
     // const startMillis = performance.now();
-    const response = await getResponse({ apiKey, ...parseResult.data })
+    const response = await getResponse(request)
     if (!response) { return null }
 
     // const stream =  getStream({ response, startMillis })

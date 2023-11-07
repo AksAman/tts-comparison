@@ -1,11 +1,12 @@
 
 
-export type TTSRequest = {
+export type ClientTTSRequest = {
+    apiKey: string;
     text: string;
     model?: string;
     voice?: string;
     stream: boolean;
-    outputFormat?: string;
+    outputFormat: string;
 }
 
 export interface TTSServiceConfig {
@@ -14,13 +15,15 @@ export interface TTSServiceConfig {
     title: string;
     key: string;
     endpoint: string;
-    clientEndpoint?: (apiKey: string, request: TTSRequest) => Promise<Response | null>;
+    clientEndpoint?: (request: ClientTTSRequest) => Promise<Response | null>;
     streamSupported: boolean;
     voiceActors: {
         id: string;
         name: string;
     }[];
+    defaultActor: string;
     outputFormats: string[];
+    defaultOutputFormat: string;
     costPerCharacter?: number;
 }
 

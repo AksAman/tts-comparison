@@ -9,6 +9,14 @@ export enum LatencyOptimizationMode {
 }
 
 
+export const OutputFormat = {
+    mp3_44100: "mp3_44100",
+    pcm_16000: "pcm_16000",
+    pcm_22050: "pcm_22050",
+    pcm_24000: "pcm_24000",
+    pcm_44100: "pcm_44100",
+} as const
+
 
 export const RequestSchema = z.object({
     text: z.string(),

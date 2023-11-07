@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+// import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import GeneralSelector from "@/components/utilities/GeneralSelector";
 import { useLocalStorage } from "@/lib/hooks/use-local-storage";
@@ -17,7 +17,7 @@ interface TTSProps {
   config: TTSServiceConfig;
 }
 
-const getAudioURL = ({
+const getServerAudioURL = ({
   endpoint,
   text,
   stream,
@@ -35,6 +35,43 @@ const getAudioURL = ({
     url.searchParams.append("voice", _voiceID);
   }
   return url.toString();
+};
+
+const getClientAudioURL = async (
+  apiKey: string,
+  text: string,
+  config: TTSServiceConfig,
+  streaming: boolean,
+  voiceID?: string,
+  outputFormat?: string,
+) => {
+  if (!config.clientEndpoint) {
+    console.error("Client Endpoint not found");
+    return null;
+  }
+  const ttsResponse = await config.clientEndpoint({
+    apiKey,
+    text,
+    voice: voiceID ?? config.defaultActor,
+    stream: streaming,
+    outputFormat: outputFormat ?? config.defaultOutputFormat,
+  });
+  if (!ttsResponse) {
+    console.error("TTS Response is null");
+    toast.error(`No response from ${config.title}`);
+    return null;
+  }
+
+  if (!ttsResponse.ok) {
+    toast.error(`Response from ${config.title}: ${await ttsResponse.text()}`);
+    if (ttsResponse.status === 401) {
+      toast.error("Invalid API Key");
+    }
+    return null;
+  }
+
+  const blob = await ttsResponse.blob();
+  return URL.createObjectURL(blob);
 };
 
 const TTS: React.FC<TTSProps> = ({ className, config, text }) => {
@@ -63,6 +100,7 @@ const TTS: React.FC<TTSProps> = ({ className, config, text }) => {
 
   React.useEffect(() => {
     addLog(`Initialized ${config.title} TTS`);
+    // create array of 10 numbers
 
     return () => {
       setLogs([]);
@@ -125,36 +163,14 @@ const TTS: React.FC<TTSProps> = ({ className, config, text }) => {
     setStartedAt(-1);
     setEndedAt(-1);
     if (!text) return;
+    addLog("--------------------------");
 
-    let url: string | AudioBufferSourceNode | null = null;
+    let url: string | null = null;
 
     if (config.useClientSide && config.clientEndpoint && apiKey) {
-      const ttsResponse = await config.clientEndpoint(apiKey, {
-        text,
-        voice: voiceID ?? undefined,
-        stream: streaming,
-        outputFormat: outputFormat ?? undefined,
-      });
-      if (!ttsResponse) {
-        console.error("TTS Response is null");
-        toast.error(`No response from ${config.title}`);
-        return;
-      }
-
-      if (!ttsResponse.ok) {
-        toast.error(
-          `Response from ${config.title}: ${await ttsResponse.text()}`,
-        );
-        if (ttsResponse.status === 401) {
-          toast.error("Invalid API Key");
-        }
-        return;
-      }
-
-      const blob = await ttsResponse.blob();
-      url = URL.createObjectURL(blob);
+      url = await getClientAudioURL(apiKey, text, config, streaming, voiceID);
     } else {
-      url = getAudioURL({
+      url = getServerAudioURL({
         endpoint: config.endpoint,
         text,
         stream: streaming,
@@ -162,6 +178,10 @@ const TTS: React.FC<TTSProps> = ({ className, config, text }) => {
       });
     }
 
+    if (!url) {
+      console.error("URL is null");
+      return;
+    }
     // pause the audio if it's playing
     if (!audioRef.current.paused) {
       audioRef.current.pause();
@@ -221,23 +241,7 @@ const TTS: React.FC<TTSProps> = ({ className, config, text }) => {
       </div>
       <audio src="" ref={audioRef}></audio>
       {/* <div className=" p-2 text-gray-300">{text}</div> */}
-      <div className="flex flex-row flex-wrap items-center justify-between gap-4">
-        {config.streamSupported ? (
-          <div className="flex flex-row items-center justify-center gap-2">
-            <Checkbox
-              className="h-6 w-6"
-              id={`${config.key}-endpoint`}
-              defaultChecked={streaming}
-              onCheckedChange={(checked) => {
-                console.log(checked);
-                setStreaming(!!!checked.valueOf());
-              }}
-            />
-            <label htmlFor={`${config.key}-endpoint`}>Streaming</label>
-          </div>
-        ) : (
-          <div className="text-sm text-red-400">Streaming not supported</div>
-        )}
+      <div className="flex flex-row flex-wrap items-center justify-end gap-4">
         <div className="flex gap-2">
           <div className="flex items-center gap-2">
             <label htmlFor="" className=" text-xs text-gray-200">
@@ -262,7 +266,9 @@ const TTS: React.FC<TTSProps> = ({ className, config, text }) => {
           <span>
             Approximate Cost per character: ${config.costPerCharacter}
           </span>
-          <span>Total cost: ${config.costPerCharacter * text.length}</span>
+          <span>
+            Total cost: ${(config.costPerCharacter * text.length).toFixed(5)}
+          </span>
         </div>
       )}
       <Button
@@ -282,12 +288,12 @@ const TTS: React.FC<TTSProps> = ({ className, config, text }) => {
         <div className="relative min-h-[2rem]">
           <Button
             variant={"link"}
-            className="absolute right-0 top-0 h-6   text-gray-400 hover:text-gray-500"
+            className="absolute right-2 top-0 h-6   text-gray-400 hover:text-gray-500"
             onClick={resetLogState}
           >
             Reset Logs
           </Button>
-          <ol className="flex flex-col-reverse">
+          <ol className="custom-scrollbar flex max-h-[200px] flex-col-reverse overflow-y-auto">
             {logs.map((log, i) => (
               <li
                 key={i}

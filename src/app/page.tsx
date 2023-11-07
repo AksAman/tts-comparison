@@ -5,9 +5,7 @@ import { OpenAITTSConfig, XILabsTTSConfig } from "@/lib/ttsConfigs";
 import React from "react";
 
 export default function HomePage() {
-  const [currentText, setCurrentText] = React.useState(
-    "Paragraphs are the building blocks of papers.",
-  );
+  const [currentText, setCurrentText] = React.useState("Hello!");
 
   return (
     <main className="flex h-full w-full flex-row items-center justify-between  p-4">
