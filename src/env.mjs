@@ -8,6 +8,9 @@ export const env = createEnv({
    */
   server: {
     NODE_ENV: z.enum(["development", "test", "production"]),
+    XI_LABS_API_KEY: z.string(),
+    XI_LABS_DEFAULT_VOICE_ID: z.string().default("21m00Tcm4TlvDq8ikWAM"),
+    OPENAI_API_KEY: z.string(),
   },
 
   /**
@@ -25,6 +28,9 @@ export const env = createEnv({
    */
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
+    XI_LABS_API_KEY: process.env.XI_LABS_API_KEY,
+    XI_LABS_DEFAULT_VOICE_ID: process.env.XI_LABS_DEFAULT_VOICE_ID,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**
