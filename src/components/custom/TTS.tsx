@@ -220,7 +220,7 @@ const TTS: React.FC<TTSProps> = ({ className, config, text }) => {
         </div>
       </div>
       <audio src="" ref={audioRef}></audio>
-      <div className="bg-gray-600 p-2 text-gray-300">{text}</div>
+      {/* <div className=" p-2 text-gray-300">{text}</div> */}
       <div className="flex flex-row flex-wrap items-center justify-between gap-4">
         {config.streamSupported ? (
           <div className="flex flex-row items-center justify-center gap-2">
@@ -239,8 +239,8 @@ const TTS: React.FC<TTSProps> = ({ className, config, text }) => {
           <div className="text-sm text-red-400">Streaming not supported</div>
         )}
         <div className="flex gap-2">
-          <div className="flex items-center gap-1">
-            <label htmlFor="" className="w-16 text-xs text-gray-200">
+          <div className="flex items-center gap-2">
+            <label htmlFor="" className=" text-xs text-gray-200">
               Output Format
             </label>
             <GeneralSelector

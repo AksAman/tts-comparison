@@ -1,4 +1,3 @@
-import { OpenAISpeechSchema } from "@/types/openai";
 
 import { type TTSRequest } from "@/types/tts";
 import { RequestSchema } from "@/types/xi";
